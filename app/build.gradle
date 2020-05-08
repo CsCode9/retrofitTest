@@ -42,4 +42,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.6.0'
+    //https://stackoverflow.com/questions/53332832/unresolved-reference-none-of-the-following-candidates-is-applicable-because-of
+    //解决方式 不知道解决的对不对，但现在是可以的
+    implementation "com.google.android.gms:play-services-location:$google_android_gms_version"
+    implementation "com.google.android.gms:play-services-gcm:$google_android_gms_version"
 }

@@ -2,6 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.3.72'
+    ext.google_android_gms_version = '15.0.1'
     repositories {
         google()
         jcenter()

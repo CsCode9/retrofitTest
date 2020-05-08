@@ -9,5 +9,5 @@ import retrofit2.http.POST
 interface CustomerService {
 
     @POST("customer/getCustomerByPage")
-    fun getCustomer(@Body customerRequest: CustomerRequest): Call<List<CustomerResponse.Row>>
+    fun getCustomer(@Body customerRequest: CustomerRequest): Call<CustomerResponse>
 }
