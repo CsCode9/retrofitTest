@@ -3,15 +3,36 @@ package com.cimcitech.retrofotrequesttest.network
 import android.util.Log
 import androidx.lifecycle.liveData
 import com.cimcitech.retrofotrequesttest.bean.requestBean.CustomerRequest
-import com.cimcitech.retrofotrequesttest.bean.responseBean.CustomerResponse
 import kotlinx.coroutines.Dispatchers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.RuntimeException
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
+
 object Repository {
+
+    fun uploadFile(list: List<File>) = fire(Dispatchers.IO){
+        //创建表单map,里面存储服务器本接口所需要的数据;
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM) //在这里添加服务器除了文件之外的其他参数
+        for (file in list) {
+            val body = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+            //添加文件(uploadfile就是你服务器中需要的文件参数)
+            Log.e("--------文件-------", "uploadFile: ${file.isFile}" )
+            Log.e("--------文件-------", "uploadFile: ${file.absolutePath}" )
+            builder.addFormDataPart("files", file.name, body)
+        }
+        val parts = builder.build().parts
+        val response = Network.uploadFile(parts)
+        if (response.code == 200){
+            Result.success(response.urls)
+        }else{
+            Result.failure(RuntimeException("上传失败"))
+        }
+    }
 
     fun getCustomer(customerRequest: CustomerRequest) = fire(Dispatchers.IO){
            val response =  Network.getCustomer(customerRequest)
@@ -22,6 +43,14 @@ object Repository {
             }
     }
 
+    fun getPlace(query: String) = fire(Dispatchers.IO){
+        val response = Network.getPlace(query)
+        if (response.status == "ok"){
+            Result.success(response.places)
+        }else{
+            Result.failure(RuntimeException("response status is ${response.status}"))
+        }
+    }
 
     private fun <T> fire(context: CoroutineContext, block: suspend () -> Result<T>) =
         liveData<Result<T>>(context) {

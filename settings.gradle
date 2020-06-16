@@ -1,2 +1,3 @@
 rootProject.name='RetrofotRequestTest'
 include ':app'
+include ':permissionx'

@@ -23,8 +23,9 @@ data class CustomerRequest(
     val pageSize: Int = 1000,
     val sort: Int = 0,
     val state: Int = 2
-)
+){
+    data class Org(
+        val pkOrg: String = "1001A11000000088888"
+    )
+}
 
-data class Org(
-    val pkOrg: String = "1001A11000000088888"
-)

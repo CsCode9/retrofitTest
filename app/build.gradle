@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.cimcitech.retrofotrequesttest"
@@ -42,8 +42,13 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.6.0'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    implementation 'com.permissionx.guolindev:permissionx:1.2.2'
+//    implementation 'com.alley:VanGogh:1.3.4'
     //https://stackoverflow.com/questions/53332832/unresolved-reference-none-of-the-following-candidates-is-applicable-because-of
     //解决方式 不知道解决的对不对，但现在是可以的
     implementation "com.google.android.gms:play-services-location:$google_android_gms_version"
     implementation "com.google.android.gms:play-services-gcm:$google_android_gms_version"
+    implementation project(path: ':permissionx')
 }
