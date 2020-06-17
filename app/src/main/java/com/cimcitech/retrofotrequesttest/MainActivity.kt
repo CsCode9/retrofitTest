@@ -23,6 +23,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.cimcitech.permissionx.PermissionX
 import com.cimcitech.retrofotrequesttest.adpter.FileAdapter
 import com.cimcitech.retrofotrequesttest.bean.requestBean.CustomerRequest
@@ -96,7 +97,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         uploadFile.setOnClickListener {
-            viewModel.fileUpload(files)
+            var fileSize = 0L
+            for (file in files) {
+                fileSize += file.length()
+            }
+            Log.e("------文件大小-----", "onCreate: ${fileSize}")
+            if (fileSize > 10485760000) {
+                MaterialDialog(this).show {
+                    title(text = "提示")
+                    message(text = "您选择的文件大小超过设定值")
+                }
+            } else {
+                viewModel.fileUpload(files)
+            }
         }
 
         open.setOnClickListener {
@@ -111,7 +124,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.fileUploadData.observe(this, Observer {
             val urls = it.getOrNull()
             if (urls != null) {
-                Log.e("----------------", "onCreate: ${urls.size}")
+                selectList.clear()
+                files.clear()
+                Log.e("----------------上传成功", "onCreate: ${urls.size}")
             }
         })
 
@@ -163,19 +178,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            PictureConfig.CHOOSE_REQUEST ->
-                if (resultCode == Activity.RESULT_OK){
+            PictureConfig.CHOOSE_REQUEST -> {
+                if (resultCode == Activity.RESULT_OK) {
                     images = PictureSelector.obtainMultipleResult(data)
-                    selectList.addAll(images)
                     files.clear()
-                    for ((index, item) in images.withIndex()){
-                        var file = File(images.get(index).path)
+                    selectList.addAll(images)
+                    for ((index, item) in selectList.withIndex()) {
+                        val file = File(selectList.get(index).path)
                         files.add(file)
                     }
                     adapter.setList(selectList)
                     adapter.notifyDataSetChanged()
-
                 }
+            }
         }
     }
 
@@ -194,7 +209,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun initWidget() {
-        val manager = FullyGridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false)
+        val manager = FullyGridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false)
         file_rv.layoutManager = manager
         adapter = GridImageAdapter(this, onAddPicClickListener)
         adapter.setList(selectList)
@@ -225,9 +240,9 @@ class MainActivity : AppCompatActivity() {
                 com.permissionx.guolindev.PermissionX.init(this@MainActivity)
                     .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .request { allGranted, grantedList, deniedList ->
-                        if (allGranted){
+                        if (allGranted) {
                             showPop()
-                        }else{
+                        } else {
                             Toast.makeText(this@MainActivity, "拒绝", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -274,17 +289,19 @@ class MainActivity : AppCompatActivity() {
         val clickListener = object : View.OnClickListener {
             override fun onClick(v: View?) {
                 when (v?.id) {
-                    R.id.tv_album ->
+                    R.id.tv_album -> {
                         PictureSelector.create(this@MainActivity)
                             .openGallery(PictureMimeType.ofImage())
                             .minSelectNum(1)
                             .imageSpanCount(4)
                             .selectionMode(PictureConfig.MULTIPLE)
                             .forResult(PictureConfig.CHOOSE_REQUEST)
-                    R.id.tv_camera ->
+                    }
+                    R.id.tv_camera -> {
                         PictureSelector.create(this@MainActivity)
                             .openCamera(PictureMimeType.ofImage())
                             .forResult(PictureConfig.CHOOSE_REQUEST)
+                    }
                     R.id.tv_cancel -> {
                     }
                 }
